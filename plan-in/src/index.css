@@ -35,6 +35,25 @@ color: white;
 
 
 }
+.semester-selector {
+
+
+  margin: 15px;
+}
+ul {
+
+  list-style-type: none;
+}
+.person-list{
+
+  display: flex;
+  flex-direction: row;
+}
+.remove-button {
+
+  padding: 1px;
+  margin: 5px;
+}
 
 .flextd {
   width: 100%;
@@ -55,6 +74,9 @@ color: white;
 }
 
 #logo {
+  position: absolute;
+  top: 40px;
+  left: 150px;
   width: 250px;
   height: 170px;
   margin-right: 20px;
@@ -68,7 +90,12 @@ color: white;
   border: none;
   cursor: pointer;
 }
-
+.content {
+display: flex;
+flex-direction: column;
+align-items: center;
+  margin-top: 100px;
+}
 .generate-button:hover {
   background-color: #45a049;
 }
