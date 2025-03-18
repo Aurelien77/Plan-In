@@ -1,3 +1,7 @@
+h1 {
+  color: red;
+}
+
 .app-container {
 display: flex;
 flex-direction: column;
@@ -7,7 +11,7 @@ justify-content: center;
 
 
 .schedule-display {
-
+border: 1px solid grey;
   justify-content: center;
   display: flex;
   width: 100%;
@@ -23,18 +27,9 @@ justify-content: center;
 background-color: blue;
 color: white;
 }
-.planning-container {
-  font-family: Arial, sans-serif;
- 
-}
-
-.flex {
 
 
 
-
-
-}
 .semester-selector {
 
 
@@ -55,20 +50,15 @@ ul {
   margin: 5px;
 }
 
-.flextd {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
+.data > *:nth-child(5n+3) {
+  background-color: lightgray; 
 }
 .data {
-
+  border: 1px solid grey;
   display: flex;
   flex-direction: column;
-  padding: 5px;
-  background-color: #4CAF50;
+  padding: 12px;
+
   align-items: center;
   align-content: center;
 }
@@ -82,72 +72,20 @@ ul {
   margin-right: 20px;
 }
 
-.generate-button {
-  padding: 10px 20px;
-  margin: 10px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
+
 .content {
 display: flex;
 flex-direction: column;
 align-items: center;
   margin-top: 100px;
 }
-.generate-button:hover {
-  background-color: #45a049;
-}
 
-.calendar-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-}
 
-.month-container {
-  width: 45%;
-  margin: 20px;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-}
-
-.days-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 10px;
-}
-
-.day {
-  padding: 10px;
-  background-color: #f4f4f4;
-  text-align: center;
-  border-radius: 5px;
-}
-
-.day p {
-  margin: 0;
-  font-size: 14px;
-}
-.texte {
-padding: 10px;
-
-}
-h1 {
-
-  color: red;
-}
 table {
 
   width: 100%;
 }
-.tdname {
-  display: flex;
-background-color: #45a049;
 
-}
 .selectedsemestre{
 font-size: 1.4rem;
   padding: 30px;

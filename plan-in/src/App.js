@@ -46,17 +46,15 @@ const App = () => {
     setSchedule(newSchedule);
   };
 
-  // Fonction pour gérer le changement de l'année
-  const handleYearChange = (event) => {
-    setSelectedYear(event.target.value);
-    generateSchedule(event.target.value, selectedSemester);
-  };
+  
 
   // Fonction pour gérer le changement du semestre
   const handleSemesterChange = (event) => {
     setSelectedSemester(Number(event.target.value));
     generateSchedule(selectedYear, Number(event.target.value));
   };
+
+
 
   // Fonction pour ajouter une nouvelle personne à la liste
   const handleAddPerson = () => {
@@ -71,10 +69,7 @@ const App = () => {
     setPersons(persons.filter(person => person !== personToRemove));
   };
 
-  // Fonction pour trier la liste des personnes par ordre alphabétique
-  const handleSortPersons = () => {
-    setPersons([...persons].sort());
-  };
+  
 
   // Groupement des données par mois
   const groupByMonth = () => {
@@ -94,34 +89,91 @@ const App = () => {
     return grouped;
   };
 
-  const renderSchedule = () => {
-    const grouped = groupByMonth();
+const renderSchedule = () => {
+  const grouped = groupByMonth();
 
-    return Object.keys(grouped).map(month => (
+  return Object.keys(grouped).map(month => {
+    const entries = grouped[month];
+    const firstDay = entries[0]?.day; // Récupère le jour du premier élément
+
+    let skipNext = false; // Variable pour gérer les fusions
+
+    return (
       <div key={month} className="month-section">
-        <h2 className='month'>{month.toUpperCase()}</h2>
+        <h2 className="month">{month.toUpperCase()}</h2>
         <table>
-          <thead>
-          </thead>
+          <thead></thead>
           <tbody>
-            {grouped[month].map((entry, index) => (
-              <tr key={index}>
-                <div className='data'>
-                  <td>{entry.day} {entry.date}</td>
-                  <td>{entry.person}</td>
-                </div>
-              </tr>
-            ))}
+            {entries.map((entry, index, array) => {
+              if (skipNext) {
+                skipNext = false; // Ignore cet élément (car déjà fusionné)
+                return null;
+              }
+
+              // Si premier élément est un jeudi, on l'affiche seul et les suivants fusionnent
+              if (index === 0 && firstDay === "Jeudi") {
+                return (
+                  <tr key={index} className="bordertr">
+                    <div className="data">
+                      <div>
+                        <td>{entry.day} {entry.date}</td>
+                        <td>{entry.person}</td>
+                      </div>
+                    </div>
+                  </tr>
+                );
+              }
+
+              // Fusionner par deux à partir du 2e si jeudi OU dès le début si mardi
+              const nextEntry = array[index + 1];
+
+              if (nextEntry) {
+                skipNext = true; // Indique qu'on doit sauter le prochain
+                return (
+                  <tr key={index} className="bordertr">
+                    <div className="data">
+                      <div>
+                        <td>{entry.day} {entry.date}</td>
+                        <td>{entry.person}</td>
+                      </div>
+                      <div>
+                        <td>{nextEntry.day} {nextEntry.date}</td>
+                        <td>{nextEntry.person}</td>
+                      </div>
+                    </div>
+                  </tr>
+                );
+              }
+
+              // Si dernier élément sans paire, il reste seul
+              return (
+                <tr key={index} className="bordertr">
+                  <div className="data">
+                    <div>
+                      <td>{entry.day} {entry.date}</td>
+                      <td>{entry.person}</td>
+                    </div>
+                  </div>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
-    ));
-  };
+    );
+  });
+};
+
 
   // Utilisation de useEffect pour générer le planning dès le chargement de la page
   useEffect(() => {
     generateSchedule(selectedYear, selectedSemester);
   }, []); // Le tableau vide [] garantit que l'effet se déclenche uniquement lors du premier rendu
+const handleNextYear = () => {
+  const nextYear = selectedYear + 1;
+  setSelectedYear(nextYear);
+  generateSchedule(nextYear, selectedSemester);
+};
 
   return (
     <div className="app-container">
@@ -154,16 +206,21 @@ const App = () => {
         </div>
         </>
       )}
+
+<button className="next-year-button" onClick={handleNextYear}>
+  Voir l'année suivante ({selectedYear + 1})
+</button>
       {/* Bouton pour afficher ou masquer la liste des personnes */}
       <button className="toggle-button" onClick={() => setShowPersonList(!showPersonList)}>
         {showPersonList ? 'Masquer la liste des personnes' : 'Voir la liste des personnes'}
       </button>
 
       {/* Sélecteur de semestre */}
-      <select onChange={handleSemesterChange} value={selectedSemester} className="semester-selector">
-        <option value={1}>1er Semestre (Janvier à Juin)</option>
-        <option value={2}>2ème Semestre (Juillet à Décembre)</option>
-      </select>
+      <div>
+        <button onClick={handleSemesterChange}  value={1}>1er Semestre </button>
+        <button onClick={handleSemesterChange}  value={2}>2ème Semestre</button>
+        </div>
+      
 <div className='content'>
       <div className='flex'>
         <img src={logo} id="logo" alt="Logo" />
