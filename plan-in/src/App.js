@@ -9,7 +9,7 @@ const App = () => {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedSemester, setSelectedSemester] = useState(1); // 1 pour 1er semestre, 2 pour 2e semestre
   const [showPersonList, setShowPersonList] = useState(false); // Contrôle la visibilité de la liste
-
+  const [Afficheconf, setAfficheconf] = useState(false);
   // Fonction pour générer le planning en fonction de l'année et du semestre
   const generateSchedule = (year, semester) => {
     let startDate, endDate;
@@ -98,10 +98,9 @@ const App = () => {
       let skipNext = false;
   
       return (
-        <div key={month} className="month-section">
+        <div key={month} className="table_generated">
           <h2 className="month">{month.toUpperCase()}</h2>
           <table>
-            <thead></thead>
             <tbody>
               {entries.map((entry, index, array) => {
                 if (skipNext) {
@@ -127,7 +126,7 @@ const App = () => {
                   return (
                     <tr key={index} className="data">
                       <td>{entry.day} {entry.date}</td>
-                      <td>{entry.person}</td>
+                   {/*    <td>{entry.person}</td> */}
                       <td>{nextEntry.day} {nextEntry.date}</td>
                       <td>{nextEntry.person}</td>
                     </tr>
@@ -187,7 +186,7 @@ const handleNextYear = () => {
 
 
         <div className="person-list">
-          <h3>Liste des personnes :</h3>
+    
           <ul className='person-list'>
             {persons.map((person, index) => (
               <li key={index}>
@@ -199,24 +198,43 @@ const handleNextYear = () => {
         </div>
         </>
       )}
-      <div className='years'>
-<button className="next-year-button" onClick={handleBackYear}>
-  Voir l'année Précédente ({selectedYear - 1})
-</button>
+
 <button className='yearincourse' >
  Année en cours  ({selectedYear})
 </button>
+
+
+
+<button id="conf" onClick={() => setAfficheconf(!Afficheconf)}>Conf</button>
+
+{  Afficheconf &&     <>
+ <div className='years'>
+  <div>
+<button className="next-year-button" onClick={handleBackYear}>
+  Voir l'année Précédente ({selectedYear - 1})
+</button>
+</div>   <div>
 <button className="next-year-button" onClick={handleNextYear}>
   Voir l'année suivante ({selectedYear + 1})
 </button>
+</div>  
+ 
 </div>
-      {/* Bouton pour afficher ou masquer la liste des personnes */}
-      <button className="toggle-button" onClick={() => setShowPersonList(!showPersonList)}>
-        {showPersonList ? 'Masquer la liste des personnes' : 'Voir la liste des personnes'}
-      </button>
+     {/* Bouton pour afficher ou masquer la liste des personnes */}
+     <div id='boutonpersonne'>
+     <button className={showPersonList ?  "toggle-button-active" : "toggle-button" } onClick={() => setShowPersonList(!showPersonList)}>
+     {showPersonList ? 'Masquer la liste des personnes' : 'Voir la liste des personnes'}
+   </button>
+   </div>
+   </>
+   
+}
+
+
+
 
       {/* Sélecteur de semestre */}
-      <div>
+      <div className='valueSemestre'>
         <button onClick={handleSemesterChange}  value={1}>1er Semestre </button>
         <button onClick={handleSemesterChange}  value={2}>2ème Semestre</button>
         </div>
