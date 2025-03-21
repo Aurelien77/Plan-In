@@ -5,8 +5,29 @@ h1 {
 
   position: absolute;
   right: 40px;
-  top: 40px;
+  top: 15px;
+  border-radius: 20%;
+  padding: 5px;
  }
+
+ #conf:hover {
+
+background-color: rgb(247, 186, 136);
+-webkit-text-stroke: rgb(64, 9, 193) 0.2px;
+text-shadow:  1px solid black ;
+cursor: pointer;
+ }
+
+ #conf:focus {
+
+  background-color: rgb(243, 159, 90);
+
+   }
+   #conf:active{
+
+    background-color: rgb(245, 78, 22);
+  
+     }
  #boutonpersonne   {
 position: absolute;
 left: 10px;
@@ -34,7 +55,10 @@ border-radius: 10%;
 
   box-shadow: 2px 4px 4px 1px black;
   display: flex;
-
+  animation: driveIn 1s ease-out;
+  transform-origin: center;
+  overflow: hidden;
+  transition: transform 0.3s ease; 
 }
 
 .table_generated {
@@ -177,21 +201,61 @@ justify-content: space-between;
 .years button {
  
   right: 100px;
-
+  font-size: 0.8rem;
 margin: 5px;
   padding: 5px;
 }
-
+.red {
+font-weight: bold;
+  color: red;
+  font-size: 1.2rem;
+}
 .years  {
   position: absolute;
+  display: flex;
+
   right: 100px;
 top: 0px;
 margin: 5px;
   padding: 5px;
 }
 .yearincourse {
+  padding: 7px;
 border-radius: 20%;
   background-color: antiquewhite;
+}
+.er {
+background-color: #c3dffe;
+border-radius: 20%;
+padding: 5px;
+box-shadow: black 1px 1px 1px;
+}
+
+.er:focus {
+  background-color: #eef1f4;
+  border-radius: 20%;
+  padding: 5px;
+  }
+  .er:hover {
+  cursor: pointer;
+  background-color: #86bdfb;
+  box-shadow: black 0.3px 0.2px 0.1px;
+    }
+.sd {
+  box-shadow: black 1px 1px 1px;
+  background-color: #97c2f3;
+  border-radius: 20%;
+  padding: 5px;
+}
+.sd:hover {
+  cursor: pointer;
+  background-color: #86bdfb;
+  box-shadow: black 0.3px 0.2px 0.1px;
+    }
+.sd:focus{
+  background-color: #eef1f4;
+  border-radius: 20%;
+  padding: 5px;
 }
 .personne {
 
@@ -239,13 +303,15 @@ margin-left: 150px;
 .highlight-button {
   position: absolute;
   top: 5px;
-  right: 500px;
+  right: 650px;
   padding: 10px;
   background-color: #007bff;
   color: white;
   border: none;
   cursor: pointer;
   margin: 10px 0;
+  border-radius: 20%;
+  box-shadow: black 1px 1px 1px;
 }
 
 .highlight-button:hover {
@@ -264,4 +330,22 @@ margin-left: 150px;
 
 .back-to-today-button:hover {
   background-color: #0056b3;
+}
+
+@keyframes driveIn {
+  0% {
+    transform: translateX(-100%) rotate(-5deg); /* Hors écran à gauche */
+  }
+  70% {
+    transform: translateX(0) rotate(-5deg); /* Arrive à la position finale */
+  }
+  80% {
+    transform: translateX(0) rotate(0deg); /* Premier mouvement de balancement à gauche */
+  }
+  90% {
+    transform: translateX(0) rotate(1deg); /* Deuxième mouvement de balancement à droite */
+  }
+  100% {
+    transform: translateX(0) rotate(0); /* Arrêt brusque à la position finale avec alignement droit */
+  }
 }

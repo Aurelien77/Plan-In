@@ -32,7 +32,7 @@ const App = () => {
     const calculatePreviousAssignments = (targetYear, targetSemester) => {
       let totalAssignments = 0;
   
-      for (let y = 2023; y < targetYear; y++) { // 2023 = année de début (ajustez si nécessaire)
+      for (let y = 2025; y < targetYear; y++) { // 2023 = année de début (ajustez si nécessaire)
         totalAssignments += countYearlyAssignments(y);
       }
   
@@ -43,25 +43,33 @@ const App = () => {
       return totalAssignments;
     };
   
-    // Fonction pour compter les affectations d'une année complète
-    const countYearlyAssignments = (year) => {
-      return countSemesterAssignments(year, 1) + countSemesterAssignments(year, 2);
-    };
+ 
   
-    // Fonction pour compter les affectations d'un semestre
-    const countSemesterAssignments = (year, semester) => {
-      let count = 0;
-      let tempDate = new Date(year, semester === 1 ? 0 : 6, 1);
-      let endDate = new Date(year, semester === 1 ? 5 : 11, 30);
+  // Fonction pour compter les affectations d'un semestre
+const countSemesterAssignments = (year, semester) => {
+  let count = 0;
   
-      for (; tempDate <= endDate; tempDate.setDate(tempDate.getDate() + 1)) {
-        if (tempDate.getDay() === 1 || tempDate.getDay() === 4) {
-          if (tempDate.getDay() === 4) count++;
-        }
-      }
+  // Déterminer la date de début du semestre
+  let tempDate = new Date(year, semester === 1 ? 0 : 6, 1);  // 0 pour janvier, 6 pour juillet
   
-      return count;
-    };
+  // Utiliser la méthode "new Date(year, month + 1, 0)" pour obtenir le dernier jour du mois
+  let endDate = new Date(year, semester === 1 ? 6 : 12, 0);  // 6 pour juin, 12 pour décembre
+  
+  // Itérer à travers tous les jours du semestre (du 1er jour au dernier jour)
+  for (; tempDate <= endDate; tempDate.setDate(tempDate.getDate() + 1)) {
+    if (tempDate.getDay() === 1 || tempDate.getDay() === 4) {  // Lundi ou Jeudi
+      if (tempDate.getDay() === 4) count++;  // Compter uniquement les jeudis
+    }
+  }
+
+  return count;
+};
+
+// Fonction pour compter les affectations d'une année complète
+const countYearlyAssignments = (year) => {
+  return countSemesterAssignments(year, 1) + countSemesterAssignments(year, 2);
+};
+
   
     // Déterminer où on s'était arrêté
     let currentPersonIndex = calculatePreviousAssignments(year, semester);
@@ -275,7 +283,7 @@ const App = () => {
       )}
 
 <button className='yearincourse' >
- Année en cours  ({selectedYear})
+ Année en cours  <span className='red'>{selectedYear}</span>
 </button>
 
 
@@ -284,19 +292,19 @@ const App = () => {
 
 {  Afficheconf &&     <>
  <div className='years'>
-  <div>
+  
 <button className="next-year-button" onClick={handleBackYear}>
-  Voir l'année Précédente ({selectedYear - 1})
+Année Précédente
 </button>
-</div>  <button className="back-to-today-button" onClick={handleBackToToday}>
-  Revenir à la date en cours
-</button> <div>
+
 <button className="next-year-button" onClick={handleNextYear}>
-  Voir l'année suivante ({selectedYear + 1})
+Année suivante
 </button>
+<button className="back-to-today-button" onClick={handleBackToToday}>
+ Refresh
+</button> 
 </div>  
  
-</div>
      {/* Bouton pour afficher ou masquer la liste des personnes */}
      <div id='boutonpersonne'>
      <button className={showPersonList ?  "toggle-button-active" : "toggle-button" } onClick={() => setShowPersonList(!showPersonList)}>
@@ -312,8 +320,8 @@ const App = () => {
 
       {/* Sélecteur de semestre */}
       <div className='valueSemestre'>
-        <button onClick={handleSemesterChange}  value={1}>1er Semestre </button>
-        <button onClick={handleSemesterChange}  value={2}>2ème Semestre</button>
+        <button onClick={handleSemesterChange}  value={1} className='er'>1er Semestre </button>
+        <button onClick={handleSemesterChange}  value={2} className='sd'>2ème Semestre</button>
         </div>
       
 <div className='content'>
