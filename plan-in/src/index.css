@@ -155,7 +155,8 @@ justify-content: space-between;
 .selectedsemestre {
   margin-bottom: 10px;
   font-size: 1.4rem;
-  padding: 10px;  color: rgb(13, 113, 206);
+  padding: 10px; 
+   color: rgb(13, 113, 206);
 }
 .valueSemestre {
 
@@ -191,4 +192,76 @@ margin: 5px;
 .yearincourse {
 border-radius: 20%;
   background-color: antiquewhite;
+}
+.personne {
+
+  font-weight: bold;
+  color: rgb(6, 83, 154);
+}
+
+.date {
+
+
+  color: rgb(6, 98, 184);
+}
+.informations {
+position: absolute;
+left: 10px;
+bottom: 100px;
+}
+.details {
+font-weight: bold;
+  display: flex;
+  flex-direction:row;
+}
+.detaila {
+  font-weight: bold;
+margin-left: 150px;
+
+}
+
+.detailb {
+  font-weight: bold;
+  margin-left: 150px;
+
+}
+.detailc {
+  font-weight: bold;
+  margin-left: 10px;
+
+}
+
+.highlight {
+  background-color: yellow !important;
+  font-weight: bold;
+}
+
+.highlight-button {
+  position: absolute;
+  top: 5px;
+  right: 500px;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin: 10px 0;
+}
+
+.highlight-button:hover {
+  background-color: #0056b3;
+}
+.back-to-today-button {
+  padding: 10px 20px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.back-to-today-button:hover {
+  background-color: #0056b3;
 }

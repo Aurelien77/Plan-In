@@ -4,15 +4,22 @@ import logo from './assets/logo.jpg';
 
 const App = () => {
   const [schedule, setSchedule] = useState({});
-  const [persons, setPersons] = useState(['Jean', 'Marie', 'Paul', 'Sophie']);
+  const [persons, setPersons] = useState(['DOMART', 'KHAUV', 'MOMPEROUSSE', 'KUPCIC','PORCHERON','MUNIER-RODRIGUEZ','MONCEAU','NAJIM']);
   const [newPerson, setNewPerson] = useState('');
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedSemester, setSelectedSemester] = useState(1); // 1 pour 1er semestre, 2 pour 2e semestre
   const [showPersonList, setShowPersonList] = useState(false); // Contrôle la visibilité de la liste
   const [Afficheconf, setAfficheconf] = useState(false);
+  const [highlightToday, setHighlightToday] = useState(false);
+
   // Fonction pour générer le planning en fonction de l'année et du semestre
+  const toggleHighlightToday = () => {
+    setHighlightToday(!highlightToday);
+  };
+  
   const generateSchedule = (year, semester) => {
     let startDate, endDate;
+  
     if (semester === 1) {
       startDate = new Date(year, 0, 1); // Janvier
       endDate = new Date(year, 5, 30); // Juin
@@ -20,31 +27,68 @@ const App = () => {
       startDate = new Date(year, 6, 1); // Juillet
       endDate = new Date(year, 11, 31); // Décembre
     }
-
+  
+    // Fonction pour compter le nombre d'assignations passées
+    const calculatePreviousAssignments = (targetYear, targetSemester) => {
+      let totalAssignments = 0;
+  
+      for (let y = 2023; y < targetYear; y++) { // 2023 = année de début (ajustez si nécessaire)
+        totalAssignments += countYearlyAssignments(y);
+      }
+  
+      if (targetSemester === 2) {
+        totalAssignments += countSemesterAssignments(targetYear, 1);
+      }
+  
+      return totalAssignments;
+    };
+  
+    // Fonction pour compter les affectations d'une année complète
+    const countYearlyAssignments = (year) => {
+      return countSemesterAssignments(year, 1) + countSemesterAssignments(year, 2);
+    };
+  
+    // Fonction pour compter les affectations d'un semestre
+    const countSemesterAssignments = (year, semester) => {
+      let count = 0;
+      let tempDate = new Date(year, semester === 1 ? 0 : 6, 1);
+      let endDate = new Date(year, semester === 1 ? 5 : 11, 30);
+  
+      for (; tempDate <= endDate; tempDate.setDate(tempDate.getDate() + 1)) {
+        if (tempDate.getDay() === 1 || tempDate.getDay() === 4) {
+          if (tempDate.getDay() === 4) count++;
+        }
+      }
+  
+      return count;
+    };
+  
+    // Déterminer où on s'était arrêté
+    let currentPersonIndex = calculatePreviousAssignments(year, semester);
+  
     const newSchedule = {};
-    let currentPersonIndex = 0;
-
+  
     for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
       const day = date.getDay();
-
-      if (day === 2 || day === 4) { // Mardi et Jeudi
+  
+      if (day === 1 || day === 4) { // Lundi et Jeudi
         const key = date.toDateString();
-
-        // Assigner la même personne pour le mardi et le jeudi suivant
-        if (day === 2) {
+  
+        if (day === 1) {
           newSchedule[key] = persons[currentPersonIndex % persons.length];
         } else if (day === 4) {
           const previousTuesday = new Date(date);
-          previousTuesday.setDate(date.getDate() - 2);
+          previousTuesday.setDate(date.getDate() - 3);
           const previousKey = previousTuesday.toDateString();
           newSchedule[key] = newSchedule[previousKey] || persons[currentPersonIndex % persons.length];
           currentPersonIndex++;
         }
       }
     }
-
+  
     setSchedule(newSchedule);
   };
+  
 
   
 
@@ -91,12 +135,12 @@ const App = () => {
 
   const renderSchedule = () => {
     const grouped = groupByMonth();
-  
+    const todayStr = new Date().toDateString(); 
     return Object.keys(grouped).map(month => {
       const entries = grouped[month];
       const firstEntry = entries[0];
       let skipNext = false;
-  
+    
       return (
         <div key={month} className="table_generated">
           <h2 className="month">{month.toUpperCase()}</h2>
@@ -107,37 +151,50 @@ const App = () => {
                   skipNext = false;
                   return null;
                 }
-  
-                // Afficher le premier jeudi seul
+    
+                const monthIndex = new Date(`${month} 1, ${selectedYear}`).getMonth();
+          
+                const entryDate = new Date(selectedYear, monthIndex, entry.date);
+                const isToday = highlightToday && entryDate.toDateString() === todayStr;
+                let today = new Date();
+                let nextMondayOrThursday = new Date(today);
+                
+                // Si aujourd'hui n'est pas lundi (1) ou jeudi (4), cherche le prochain
+                while (nextMondayOrThursday.getDay() !== 1 && nextMondayOrThursday.getDay() !== 4) {
+                  nextMondayOrThursday.setDate(nextMondayOrThursday.getDate() + 1);
+                }
+                
+                // Vérifier si l'entrée du planning correspond au prochain lundi ou jeudi
+                const isNextPlannedDay = highlightToday && entryDate.toDateString() === nextMondayOrThursday.toDateString();  
                 if (index === 0 && firstEntry.day === "jeudi") {
                   return (
-                    <tr key={index} className="bordertr">
-                      <td>{entry.day} {entry.date}</td>
-                      <td>{entry.person}</td>
+<tr key={index} className={`data ${isToday || isNextPlannedDay ? "highlight" : ""}`.trim()}>
+
+                      <td className='date'>{entry.day} {entry.date}</td>
+                      <td className='personne'>{entry.person}</td>
                     </tr>
                   );
                 }
-  
+    
                 const nextEntry = array[index + 1];
-  
-                // Si c'est un mardi et il y a un jeudi après, on fusionne
-                if (entry.day === "mardi" && nextEntry && nextEntry.day === "jeudi") {
+    //Fusionne les cellules lundi et jeudi
+                if (entry.day === "lundi" && nextEntry && nextEntry.day === "jeudi") {
                   skipNext = true;
                   return (
-                    <tr key={index} className="data">
-                      <td>{entry.day} {entry.date}</td>
-                   {/*    <td>{entry.person}</td> */}
-                      <td>{nextEntry.day} {nextEntry.date}</td>
-                      <td>{nextEntry.person}</td>
+                    <tr key={index} className={`data ${isToday || isNextPlannedDay ? "highlight" : ""}`.trim()}>
+
+                      <td className='date'>{entry.day} {entry.date}</td>
+                      <td className='date'>{nextEntry.day} {nextEntry.date}</td>
+                      <td className='personne'>{nextEntry.person}</td>
                     </tr>
                   );
                 }
-  
-                // Si c'est un jeudi sans mardi avant, il est seul
+    
                 return (
-                  <tr key={index} className="data">
-                    <td>{entry.day} {entry.date}</td>
-                    <td>{entry.person}</td>
+                  <tr key={index} className={`data ${isToday || isNextPlannedDay ? "highlight" : ""}`.trim()}>
+
+                    <td className='date'>{entry.day} {entry.date}</td>
+                    <td className='personne'>{entry.person}</td>
                   </tr>
                 );
               })}
@@ -161,12 +218,30 @@ const App = () => {
     generateSchedule(nextYear, selectedSemester);
   };
   
-const handleNextYear = () => {
-  const nextYear = selectedYear + 1;
-  setSelectedYear(nextYear);
-  generateSchedule(nextYear, selectedSemester);
-};
-
+  const handleNextYear = () => {
+    let nextYear = selectedYear + 1;
+    let nextSemester = selectedSemester;
+  
+    // Si on est sur le 2e semestre, passer au 1er semestre de l'année suivante
+    if (selectedSemester === 2) {
+      nextSemester = 1;
+    }
+  
+    setSelectedYear(nextYear);
+    setSelectedSemester(nextSemester);
+    generateSchedule(nextYear, nextSemester);
+  };
+  
+  const handleBackToToday = () => {
+    // Réinitialiser la date sur la date d'aujourd'hui
+    setSelectedYear(new Date().getFullYear());
+    setSelectedSemester(getCurrentSemester()); // Fonction pour déterminer le semestre actuel
+    generateSchedule(new Date().getFullYear(), getCurrentSemester());
+  };
+  const getCurrentSemester = () => {
+    const currentMonth = new Date().getMonth();
+    return currentMonth < 6 ? 1 : 2; // Semestre 1 si mois avant juin, semestre 2 après
+  };
   return (
     <div className="app-container">
         {/* Liste des personnes - visible uniquement si showPersonList est true */}
@@ -213,7 +288,9 @@ const handleNextYear = () => {
 <button className="next-year-button" onClick={handleBackYear}>
   Voir l'année Précédente ({selectedYear - 1})
 </button>
-</div>   <div>
+</div>  <button className="back-to-today-button" onClick={handleBackToToday}>
+  Revenir à la date en cours
+</button> <div>
 <button className="next-year-button" onClick={handleNextYear}>
   Voir l'année suivante ({selectedYear + 1})
 </button>
@@ -240,7 +317,11 @@ const handleNextYear = () => {
         </div>
       
 <div className='content'>
-      <div className='flex'>
+      <div className='flex'> 
+        
+         <button className="highlight-button" onClick={toggleHighlightToday}>
+  {highlightToday ? "Désactiver la surbrillance" : "Prochain slot"}
+</button>
         <img src={logo} id="logo" alt="Logo" />
         <h1>PLANNING DE NETTOYAGE DES PARTIES COMMUNES</h1>
       </div>
@@ -257,6 +338,16 @@ const handleNextYear = () => {
       <div className="schedule-display">
         {renderSchedule()}
       </div>
+<div className='informations'>
+<div className='details'>
+      <div className='detaila'>Lundi soir : sortir la poubelle ménagère</div> 
+      <div className='detailb'>jeudi soir : sortir toutes les poubelles (ménagère et recycalge) </div>
+
+  </div>
+  <div className='details'>
+      <div className='detaila'>Lorsque les poubelles sont à l'exterieur du local, c'est qu'elles n'ont pas été lavées, ne rien mettre dedans.</div>
+      <div className='detailc'>Les poubelles doivent être nettoyées au plus tard le samedi midi.</div>
+      </div></div>
     </div>
     </div>
   );
