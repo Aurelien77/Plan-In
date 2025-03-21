@@ -1,6 +1,37 @@
 h1 {
   color: red;
 }
+.selectedyear {
+display: flex;
+align-items: center;
+  background-color: #d2e3f4;
+  border-radius: 50%;
+  padding: 1%;
+}
+.last-year-button {
+  border-radius: 0% 10% 10% 10%;
+  border-radius: 20%;
+  background-color: #edf3ca;
+  cursor: pointer;
+  }
+
+  .last-year-button:hover {
+    border-radius: 40% 10% 10% 40%;
+
+    background-color: #edf3ca;
+    cursor: pointer;
+    }
+
+.next-year-button {
+border-radius: 20%;
+background-color: #e7f397;
+cursor: pointer;
+}
+.next-year-button:hover {
+border-radius: 0% 40% 40% 10%;
+  background-color: #f1f3ea;
+  
+  }
  #conf {
 
   position: absolute;

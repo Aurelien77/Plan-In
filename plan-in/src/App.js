@@ -293,10 +293,10 @@ const countYearlyAssignments = (year) => {
 {  Afficheconf &&     <>
  <div className='years'>
   
-<button className="next-year-button" onClick={handleBackYear}>
+<button className="last-year-button" onClick={handleBackYear}>
 Année Précédente
 </button>
-
+<span className='selectedyear'>{selectedYear}</span>
 <button className="next-year-button" onClick={handleNextYear}>
 Année suivante
 </button>
